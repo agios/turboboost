@@ -51,12 +51,15 @@ turboboostComplete = (e, resp) ->
       Turbolinks.visit(location)
     else
       enableForm $el if isForm and Turboboost.handleFormDisabling
-      maybeInsertSuccessResponseBody(resp)
+      $inserted = maybeInsertSuccessResponseBody(resp)
   else if 400 <= resp.status  < 600
     enableForm $el if isForm and Turboboost.handleFormDisabling
     $el.trigger "turboboost:error", resp.responseText
 
-  $el.trigger "turboboost:complete"
+  if $.contains(document.documentElement, $el[0])
+    $el.trigger "turboboost:complete"
+  else
+    $inserted.trigger "turboboost:complete"
 
 turboboostBeforeSend = (e, xhr, settings) ->
   xhr.setRequestHeader('X-Turboboost', '1')
